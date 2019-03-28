@@ -3,6 +3,8 @@ import sys
 from threading import Thread
 import time
 
+from PyQt5.QtWidgets import QWidget, QGridLayout, QApplication
+
 commande = []
 
 
@@ -28,6 +30,7 @@ class Caisse(Thread):
 
     def __init__(self):
         Thread.__init__(self)
+        self.code=0
 
 
     def run(self):
@@ -38,7 +41,8 @@ class Caisse(Thread):
             sys.stdout.write("Entrez la quantitee d'escence \n")
             sys.stdout.flush()
             qte = input()
-            commande.append([int(numeroCaisse), int(qte)])
+            commande.append([int(numeroCaisse), int(qte), self.code ])
+            self.code+=1
 
 pompe1=Pompe(1)
 pompe2=Pompe(2)
