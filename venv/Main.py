@@ -23,14 +23,16 @@ class Pompe(Thread):
                     if int(i[0]) == int(self.numero) and str(i[2]) == str(self.edit.text()):
                         self.edit.setText('En utilisation')
                         self.edit.setDisabled(True)
+                        self.spin.setDisabled(True)
                         self.label.setStyleSheet("QLabel {  color : red; }")
-                        attente = int(i[1]) / 10
+                        attente = (int(i[1])*(self.spin.value()/100)) / 10
                         self.commande.remove(i)
                         time.sleep(attente)
                         self.label.setStyleSheet("QLabel {  color : green; }")
-                        time.sleep(0.5)
                         self.edit.setEnabled(True)
+                        self.spin.setEnabled(True)
                         self.edit.setText('')
+                        self.spin.setValue(100)
 
 class Example(QWidget):
 
@@ -42,7 +44,7 @@ class Example(QWidget):
 
     def initUI(self):
         self.code = 0
-        self.nbPompe=1
+        self.nbPompe=5
         self.pompeSelectionee=0
         self.listPompe=[]
         self.espaceTuple = []
@@ -59,6 +61,8 @@ class Example(QWidget):
         self.setWindowTitle('Station service')
         self.show()
         for i in range (0,self.nbPompe):
+            editLayout = QHBoxLayout()
+            spinLayout = QHBoxLayout()
             self.choixPompe.addItem(("Pompe "+str(i)))
             label = QLabel("Pompe : "+str(i))
             label.setStyleSheet("QLabel {  color : green; }");
@@ -69,8 +73,16 @@ class Example(QWidget):
             pompeThread =Pompe(i,self.espaceTuple,label,edit,spin)
             pompeThread.start()
             self.listPompe.append([label,edit,pompeThread])
+            editLayout.addWidget(QLabel("Entrez votre code:"))
+            editLayout.addWidget(edit)
+
+            spinLayout.addWidget(QLabel("Pourcentage preleve"))
+            spinLayout.addWidget(spin)
+
             rightLayout.addWidget(label)
-            rightLayout.addWidget(edit)
+            rightLayout.addLayout(spinLayout)
+            rightLayout.addLayout(editLayout)
+
         self.choixPompe.currentIndexChanged.connect(self.selectionnerPompe)
         leftLayout.addWidget(self.choixPompe)
         self.qte = QLineEdit()
